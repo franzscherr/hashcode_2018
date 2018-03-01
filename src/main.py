@@ -4,11 +4,11 @@ import algorithm
 
 
 def main():
-    filenames = ('../dataset/a_example.in', '../dataset/b_should_be_easy.in',
-                 '../dataset/c_no_hurry.in', '../dataset/d_metropolis.in', '../dataset/e_high_bonus.in')
-    filename = filenames[1]
-    out_filename = '../output/outb.out'
-    r = reader.Reader(filename)
+    filenames = ('a_example.in', 'b_should_be_easy.in',
+                 'c_no_hurry.in', 'd_metropolis.in', 'e_high_bonus.in')
+    filename = filenames[4]
+    out_filename = '../output/{}.out'.format(filename[:filename.index('.')])
+    r = reader.Reader('../dataset/' + filename)
 
     a = algorithm.GreedyAlgorithm(r.get_rides(), r.get_meta_info())
     a.assign_rides()

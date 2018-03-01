@@ -8,5 +8,6 @@ class Ride:
         self.y = y
         self.s = s
         self.f = f
+        self.id = id
         self.d = np.abs(a-x)+np.abs(b-y)
         self.latest_start = self.f - self.d

@@ -32,7 +32,7 @@ class RideAssigner(object):
             if best_vehicle != -1:
                 current_vehicle_timestep[best_vehicle] = best_dist + ride.d
                 current_vehicle_position[best_vehicle] = (ride.x, ride.y)
-                self.assigned_rides[v].append(ride.id)
+                self.assigned_rides[best_vehicle].append(ride.id)
 
 
 

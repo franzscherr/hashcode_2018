@@ -4,6 +4,37 @@ import numpy as np
 def dist(src, dest):
     return np.abs(src[0] - dest[0]) + np.abs(src[1] - dest[1])
 
+class RideAssigner(object):
+    def __init__(self, rides, meta):
+        self.open_rides = list(sorted(rides, key = lambda a: getattr(a, 's')))
+        self.meta = meta
+        self.vehicles = list()
+        self.assigned_rides = list()
+        self.B = meta.B
+        for i in range(meta.F):
+            self.assigned_rides.append(list())
+
+    def assign_rides(self):
+        current_vehicle_timestep = np.zeros(self.meta.F)
+        current_vehicle_position = list()
+        for _ in range(self.meta.F):
+            current_vehicle_position.append((0, 0))
+
+        for ride in self.open_rides:
+            best_vehicle = -1
+            best_dist = np.inf
+            for v in range(self.meta.F):
+                space_dist = dist(current_vehicle_position[v], (ride.a,ride.b)) + current_vehicle_timestep[v]
+                if space_dist < best_dist and space_dist < ride.latest_start:
+                    best_vehicle = v
+                    best_dist = space_dist
+
+            if best_vehicle != -1:
+                current_vehicle_timestep[best_vehicle] = best_dist + ride.d
+                current_vehicle_position[best_vehicle] = (ride.x, ride.y)
+                self.assigned_rides[best_vehicle].append(ride.id)
+
+
 
 def spacetime_dist(vehicle_pos, vehicle_timestep, ride):
     d = dist(vehicle_pos, (ride.a, ride.b))

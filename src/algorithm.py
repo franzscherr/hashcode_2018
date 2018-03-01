@@ -16,8 +16,6 @@ class GreedyAlgorithm(object):
             self.assigned_rides.append(list())
 
     def nearest_ride(self, open_rides, src, timestep):
-        shortest_ride = open_rides.pop()
-        open_rides.add(shortest_ride)
         shortest_ride_distance = np.inf
         for ride in open_rides:
             d = dist(src, (ride.a, ride.b))
@@ -44,9 +42,22 @@ class GreedyAlgorithm(object):
                 nearest_ride, spacetime_dist = self.nearest_ride(open_rides,
                                                                  current_vehicle_position[vehicle_ind],
                                                                  current_vehicle_timestep[vehicle_ind])
-                if nearest_ride.latest_start < current_vehicle_timestep[vehicle_ind]:
+                if nearest_ride.latest_start > current_vehicle_timestep[vehicle_ind] + spacetime_dist:
                     ride_found = True
                     open_rides.remove(nearest_ride)
+                    n_open_rides -= 1
+                else:
+                    # ______________________________________________________________________________
+                    # CHECK IF ANY VEHICLE CAN MAKE THIS RIDE
+                    cannot_fulfill = True
+                    for i in range(self.meta.F):
+                        d = dist(current_vehicle_position[i], (nearest_ride.a, nearest_ride.b))
+                        if current_vehicle_timestep[i] + d < nearest_ride.latest_start:
+                            cannot_fulfill = False
+                            break
+                    if cannot_fulfill:
+                        open_rides.remove(nearest_ride)
+                        n_open_rides -= 1
 
             current_vehicle_position[vehicle_ind] = (nearest_ride.x, nearest_ride.y)
             current_vehicle_timestep[vehicle_ind] = current_vehicle_timestep[vehicle_ind] + \
